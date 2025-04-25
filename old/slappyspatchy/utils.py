@@ -1,2 +1,0 @@
-class SlappingError(Exception):
-    pass
