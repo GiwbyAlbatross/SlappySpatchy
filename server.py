@@ -1,13 +1,13 @@
 import socket
 import threading
-import avocado
+import slappyspatchy
 import atexit
 
 MAX_USERS: int = 16
 
 players_lock = threading.Lock()
 printlock = threading.Lock()
-players: dict[str, avocado.BasePlayer] = {}
+players: dict[str, slappyspatchy.BasePlayer] = {}
 
 def serve(conn: socket.socket, addr):
     request_type = conn.recv(3)
@@ -16,13 +16,13 @@ def serve(conn: socket.socket, addr):
         print(f"\033[1m{request_type.decode()!r} request from {username}\033[0m ({addr[0]} on port {addr[1]})")
     if request_type == b'JON': # JOIN request
         with players_lock:
-            players[username] = avocado.BasePlayer(username)
+            players[username] = slappyspatchy.BasePlayer(username)
     elif request_type == b'GET': # request data about a given player
         with players_lock:
             data = players[username].export_location()
         conn.send(data)
     elif request_type == b'SET': # set data about a given player
-        data = conn.recv(avocado.network.ENTITY_POS_FRMT_LEN)
+        data = conn.recv(slappyspatchy.network.ENTITY_POS_FRMT_LEN)
         with players_lock:
             players[username].update_location(data)
     elif request_type == b'LSP': # list players
@@ -40,8 +40,8 @@ def main():
     def cleanup():
         s.close()
     atexit.register(cleanup)
-    with avocado.network.new_sock() as s:
-        s.bind(('0.0.0.0', avocado.PORT))
+    with slappyspatchy.network.new_sock() as s:
+        s.bind(('0.0.0.0', slappyspatchy.PORT))
         while 1:
             s.listen(MAX_USERS)
             threading.Thread(target=serve, args=s.accept()).start()

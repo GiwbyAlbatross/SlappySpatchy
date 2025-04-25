@@ -1,12 +1,12 @@
 import pygame
 import socket
-import avocado
+import slappyspatchy
 import time
 import sys
 
 pygame.init()
 
-HOST = ('0.0.0.0', avocado.PORT)
+HOST = ('0.0.0.0', slappyspatchy.PORT)
 
 scr_w = 400
 scr_h = 400
@@ -23,7 +23,7 @@ scr = pygame.display.set_mode([scr_w, scr_h])
 
 players = pygame.sprite.Group()
 player_usernames = [username.encode('utf-8')]
-me = avocado.entity.RenderedPlayer(username)
+me = slappyspatchy.entity.RenderedPlayer(username)
 players.add(me)
 
 TICK = pygame.event.custom_type()
@@ -36,7 +36,7 @@ username = username.encode('utf-8')
 update_status("Joining")
 
 try:
-    with avocado.network.new_sock() as sock:
+    with slappyspatchy.network.new_sock() as sock:
         sock.connect(HOST)
         sock.send(b'JON')
         sock.send(username)
@@ -52,7 +52,7 @@ while run:
         if event.type == TICK:
             try:
                 update_status("LSPing")
-                with avocado.network.new_sock() as sock:
+                with slappyspatchy.network.new_sock() as sock:
                     sock.connect(HOST)
                     sock.send(b'LSP')
                     sock.send(username) # important part of protocol
@@ -60,11 +60,11 @@ while run:
                     while d != b'.'*8:
                         #update_status("LSPing:", d)
                         if d not in player_usernames:
-                            players.add(avocado.entity.RenderedPlayer(d.decode('utf-8')))
+                            players.add(slappyspatchy.entity.RenderedPlayer(d.decode('utf-8')))
                             player_usernames.append(d)
                         d = sock.recv(8)
                 update_status("Beaming state to server")
-                with avocado.network.new_sock() as sock:
+                with slappyspatchy.network.new_sock() as sock:
                     sock.connect(HOST)
                     sock.send(b'SET')
                     sock.send(username)
@@ -72,11 +72,11 @@ while run:
                 update_status("Fetching state from server")
                 for player in players:
                     if player is me: continue # optmisation and so on
-                    with avocado.network.new_sock() as sock:
+                    with slappyspatchy.network.new_sock() as sock:
                         sock.connect(HOST)
                         sock.send(b'GET')
                         sock.send(player.username)
-                        player.update_location(sock.recv(avocado.network.ENTITY_POS_FRMT_LEN))
+                        player.update_location(sock.recv(slappyspatchy.network.ENTITY_POS_FRMT_LEN))
             except BrokenPipeError:
                 print("\033[1mBROKEN PIPE\033[0m, skipping tick...", file=sys.stderr)
             except ConnectionResetError:
@@ -91,7 +91,7 @@ while run:
                 update_status("Respawning")
                 # respawn
                 me.kill()
-                me = avocado.entity.RenderedPlayer(username.decode('utf-8'))
+                me = slappyspatchy.entity.RenderedPlayer(username.decode('utf-8'))
                 players.add(me)
     update_status("Rendering")
     scr.fill((0,0,0))

@@ -4,3 +4,7 @@
 ._*
 # old verion of the app's structure, almost completely rewritten since
 old/
+
+# random text editor backups
+*.backup
+*.swap
