@@ -1,0 +1,28 @@
+ISSUE TRACKER
+=============
+
+/use this file to log issues with the program, to fix later/
+num-issues: 3 /use this number as the id of the next issue, increment with issues/
+
+ISSUE 2
+-------
+type: security
+badness: 9
+descripton: HELLO? lack of authentication
+proposed-fix: Check hash against password database (not the system one)
+
+ISSUE 1
+-------
+type: security
+badness: 6
+description: Lack of encryption. 
+proposed-fix: Maybe just use native OpenSSL implementation...
+
+ISSUE 0
+-------
+type: security
+badness: 8
+description: Server belives anything you tell it.
+proposed-fix: On server (or perhaps client, nah) check length of movement \
+  vector to verify that it is in fact the length that it is normalised \
+  to. (`4 <= mv.length() >= 6` currently, depends on player stats?)

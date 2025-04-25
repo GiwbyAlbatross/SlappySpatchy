@@ -1,0 +1,56 @@
+%YAML 1.2
+---
+
+# spatulas
+spatulaRanks:
+  - silicone
+  - metal
+  - metal-shiny
+  - golden
+  - magical
+spatulas:
+  silicone:
+    texName: SpatulaSilicone.png
+    slapPower: 2
+    slapSpeed: 2
+    names:
+      - Slicone Spatula
+  metal:
+    texName: SpatulaMetal.png
+    slapPower: 5
+    slapSpeed: 2
+    names:
+      - Metal Spatula
+  metal-shiny:
+    texName: SpatulaShinyMetal.png
+    slapPower: 5
+    slapSpeed: 4
+    names:
+      - Shiny Metal Spatula
+  golden:
+    texName: SpatulaGolden.png
+    slapPower: 6
+    slapSpeed: 1
+    names:
+      - Golden Spatula
+      - Gold Spatula
+  magical:
+    texName: SpatulaMagical.png
+    slapPower: 10
+    slapSpeed: 10
+    names:
+      - Mythic Spatula
+      - Magical Spatula
+# spatula definition:
+# texName: location of texture
+# slapPower: power of slapping (don't make it too OP)
+# slapSpeed: speed of slapping
+# names: list of proper names that get randomly chosen
+# # and put the spatula id (key it comes under in spatulas) in it's rank
+# # in spatulaRanks
+
+# players
+definedPlayers:
+  - Player1
+  - Player2
+# put the prefixes of new player skins in here
