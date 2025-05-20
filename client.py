@@ -14,8 +14,9 @@ username = ('user' + str(hash('hello world')))[:8] # generate username or
 if len(sys.argv) > 1: username = sys.argv[-1][:8]  # use supplied username
 
 def update_status(*args): # for debugging
-    print(*args, ' '*24, end='\r', flush=True)
+    #print(*args, ' '*24, end='\r', flush=True)
     #time.sleep(0.1)
+    pass
 
 update_status("Loading")
 
@@ -93,6 +94,9 @@ while run:
                 me.kill()
                 me = slappyspatchy.entity.RenderedPlayer(username.decode('utf-8'))
                 players.add(me)
+            elif event.key == pygame.K_q:
+                # send slap event
+                slappyspatchy.send_event(username, 'slap')
     update_status("Rendering")
     scr.fill((0,0,0))
     me.update_keypresses(pygame.key.get_pressed(), pygame.key.get_mods())

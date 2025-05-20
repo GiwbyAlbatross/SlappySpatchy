@@ -6,7 +6,8 @@ It uses C-style struct formatting to pack data into a packet (byte buffer). The 
 CLIENT	---------- SERVER
 requestType ->
 username ->
-<- response data
+[request data] ->
+          <- response data
 ```
 </pre>
 ## Request types

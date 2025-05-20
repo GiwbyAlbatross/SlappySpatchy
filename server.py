@@ -33,6 +33,9 @@ def serve(conn: socket.socket, addr):
         for player in players_list:
             conn.send(player.encode('utf-8'))
         conn.send(b'.' * 8)
+    else:
+        with printlock:
+            print("Received invalid request_type {request_type!r} from {username!r}")
     conn.close()
     
 
