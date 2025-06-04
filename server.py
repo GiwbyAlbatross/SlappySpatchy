@@ -20,7 +20,7 @@ def serve(conn: socket.socket, addr):
     elif request_type == b'GET': # request data about a given player
         with players_lock:
             data = players[username].export_location()
-        conn.send(data)
+        conn.sendall(data)
     elif request_type == b'SET': # set data about a given player
         data = conn.recv(slappyspatchy.network.ENTITY_POS_FRMT_LEN)
         with players_lock:
@@ -31,8 +31,11 @@ def serve(conn: socket.socket, addr):
         with printlock:
             print("Players:", players_list)
         for player in players_list:
-            conn.send(player.encode('utf-8'))
-        conn.send(b'.' * 8)
+            conn.sendall(player.encode('utf-8'))
+        conn.sendall(b'.' * 8)
+    elif request_type == b'EVT': # process event
+        event_id = int.from_bytes(conn.recv(2), 'big') # two-byte event ID, big-endian
+        slappyspatchy.event.process(username, event_id, players)
     else:
         with printlock:
             print("Received invalid request_type {request_type!r} from {username!r}")
