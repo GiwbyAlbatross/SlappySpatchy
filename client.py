@@ -17,6 +17,10 @@ def update_status(*args): # for debugging
     #print(*args, ' '*24, end='\r', flush=True)
     #time.sleep(0.1)
     pass
+def setdead():
+    global run
+    run = 0
+    print("\033[1;31mYOU DIED\033[0m")
 
 update_status("Loading")
 
@@ -72,16 +76,24 @@ while run:
                     sock.send(me.export_location())
                 update_status("Fetching state from server")
                 for player in players:
-                    if player is me: continue # optmisation and so on
+                    #if player is me: continue # optmisation and so on
                     with slappyspatchy.network.new_sock() as sock:
                         sock.connect(HOST)
                         sock.send(b'GET')
                         sock.send(player.username)
-                        player.update_location(sock.recv(slappyspatchy.network.ENTITY_POS_FRMT_LEN))
+                        try:
+                            player.update_location(sock.recv(slappyspatchy.network.ENTITY_POS_FRMT_LEN),
+                                                   update_pos=player is not me, update_stats=True)
+                        except slappyspatchy.entity.struct.error:
+                            if player is me:
+                                # probably means we're dead
+                                setdead()
             except BrokenPipeError:
                 print("\033[1mBROKEN PIPE\033[0m, skipping tick...", file=sys.stderr)
             except ConnectionResetError:
                 print("\033[1mCONNECTION RESET\033[0m, skipping tick...", file=sys.stderr)
+            if me.hp <= 0:
+                setdead()
         elif event.type == pygame.QUIT:
             update_status("Quitting")
             run = 0
@@ -94,9 +106,9 @@ while run:
                 me.kill()
                 me = slappyspatchy.entity.RenderedPlayer(username.decode('utf-8'))
                 players.add(me)
-            elif event.key == pygame.K_q:
+            elif event.key in {pygame.K_q, pygame.K_SPACE}:
                 # send slap event
-                slappyspatchy.send_event(username, 'slap')
+                slappyspatchy.send_event(username, 'slap', HOST)
     update_status("Rendering")
     scr.fill((0,0,0))
     me.update_keypresses(pygame.key.get_pressed(), pygame.key.get_mods())
@@ -104,6 +116,9 @@ while run:
         player.update_pos(dt)
         scr.blit(player.surf, player.rect)
         player.render_nametag(scr)
+        scr.blit(slappyspatchy.util.render_text("Health: "+str(me.hp)), (0,0))
+        # render slapping hitbox
+        pygame.draw.rect(scr, (255,25,250), player.slapping_hitbox, 1)
     pygame.display.flip()
 
 pygame.quit()

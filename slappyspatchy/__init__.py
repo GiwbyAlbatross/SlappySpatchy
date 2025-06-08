@@ -1,8 +1,10 @@
-from .entity import BasePlayer
-from .network import send_event
+# constants
+PORT = 12345
+
+# poorly ordered imports
 from . import network
 from . import entity
 from . import event
 from . import util
-
-PORT = 12345
+from .entity import BasePlayer
+from .event import send_event
